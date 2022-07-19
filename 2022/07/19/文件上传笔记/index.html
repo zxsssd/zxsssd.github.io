@@ -4,15 +4,57 @@
   <meta charset="utf-8">
   
   
-  <title>Hexo</title>
+  <title>文件上传笔记 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="文件上传漏洞🥘漏洞原理👮‍♂️通过 PHP，可以把文件上传到服务器。 在一个网站上，都会有上传文件的功能，比如上传头像图片什么的，这时候文件上传的地方就存在着可能被我们绕过的地方。当我们找到可以绕过的地方，然后将恶意代码植入到服务器中，再通过url去访问以执行代码，那么我们就有可能拿到目标服务器的web权限。 产生原因概括类似于php，asp，jsp或者其他语言编写的网站，在修改或者一个新的页">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传笔记">
+<meta property="og:url" content="http://example.com/2022/07/19/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="文件上传漏洞🥘漏洞原理👮‍♂️通过 PHP，可以把文件上传到服务器。 在一个网站上，都会有上传文件的功能，比如上传头像图片什么的，这时候文件上传的地方就存在着可能被我们绕过的地方。当我们找到可以绕过的地方，然后将恶意代码植入到服务器中，再通过url去访问以执行代码，那么我们就有可能拿到目标服务器的web权限。 产生原因概括类似于php，asp，jsp或者其他语言编写的网站，在修改或者一个新的页">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://cdn.redmango.top/img/32c98214577198af2e54266c9de3d39.png">
+<meta property="og:image" content="http://goodcheerleung.gitee.io/blog/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20200716232655.png">
+<meta property="og:image" content="http://goodcheerleung.gitee.io/blog/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20200716232734.png">
+<meta property="og:image" content="http://goodcheerleung.gitee.io/blog/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20200716235614.png">
+<meta property="og:image" content="http://goodcheerleung.gitee.io/blog/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20200716235728.png">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDFDJCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDGDBCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDGDHCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDHDBCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDIDBCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDIDDCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDIDICPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDJDFCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDIDJDHCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDADECPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDBDJCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDCDACPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://example.com/2022/07/openfile.jsp">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDCDCCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDCDFCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDCDICPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDDDICPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDDDCCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDDDDCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDDDGCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDEDJDDDHCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDBDIDECPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDBDIDDCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDBDIDCCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDBDIDICPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDBDIDJCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDBDJDDCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDBDJDBCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDCDADDCPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://example.com/2022/07/image-20211125131017729.png">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDCDADECPGJGNGBGHGFCOHAGOGH">
+<meta property="og:image" content="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDBDFDCDADFCPGJGNGBGHGFCOHAGOGH">
+<meta property="article:published_time" content="2022-07-19T13:36:49.000Z">
+<meta property="article:modified_time" content="2022-07-19T13:38:26.357Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.redmango.top/img/32c98214577198af2e54266c9de3d39.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -69,9 +111,7 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-文件上传笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-文件上传笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/07/19/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%AC%94%E8%AE%B0/" class="article-date">
   <time class="dt-published" datetime="2022-07-19T13:36:49.000Z" itemprop="datePublished">2022-07-19</time>
@@ -84,8 +124,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/07/19/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E7%AC%94%E8%AE%B0/">文件上传笔记</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      文件上传笔记
     </h1>
   
 
@@ -341,62 +381,19 @@
     </footer>
   </div>
   
-</article>
-
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/01/20/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2022-01-20T07:02:24.176Z" itemprop="datePublished">2022-01-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/20/hello-world/">Hello World</a>
-    </h1>
+    <a href="/2022/01/20/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/20/hello-world/" data-id="cl5s821uc00001wwf1ood6wxd" data-title="Hello World" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-
-  
 
 
 </section>
